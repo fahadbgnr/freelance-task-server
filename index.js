@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 const app = express();
@@ -26,6 +26,26 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const freelancerTaskCollection = client.db('freelancerDB').collection('freelancerData')
+
+    app.get('/freelancerData', async(req, res)=>{
+      const result = await freelancerTaskCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.get('/freelancerData/:id', async(req, res)=>{
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await freelancerTaskCollection.findOne(query)
+      res.send(result)
+    })
+
+    app.post('/freelancerData', async(req, res)=>{
+      const newAddTaskData =req.body;
+      const result = await freelancerTaskCollection.insertOne(newAddTaskData)
+      res.send(result)
+    })
 
 
 
