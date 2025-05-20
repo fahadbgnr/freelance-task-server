@@ -45,6 +45,12 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/freelancerData/:email', async (req, res) => {
+      const email = req.query.email;
+      const result = await freelancerTaskCollection.find({ email }).toArray();
+      res.send(result);
+    });
+
     app.post('/freelancerData', async (req, res) => {
       const newAddTaskData = req.body;
       const result = await freelancerTaskCollection.insertOne(newAddTaskData)
@@ -61,11 +67,11 @@ async function run() {
     })
 
 
-    app.get('/users/:email', async (req, res) => {
-      const email = req.query.email;
-      const result = await userCollection.find({ email }).toArray();
-      res.send(result);
-    });
+    // app.get('/users/:email', async (req, res) => {
+    //   const email = req.query.email;
+    //   const result = await userCollection.find({ email }).toArray();
+    //   res.send(result);
+    // });
 
     app.post('/users', async (req, res) => {
       const userProfile = req.body;
