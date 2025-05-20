@@ -27,27 +27,59 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const freelancerTaskCollection = client.db('freelancerDB').collection('freelancerData')
+    const freelancerTaskCollection = client.db('freelancerDB').collection('freelancerData');
+    const userCollection = client.db('freelancerDB').collection('users');
 
-    app.get('/freelancerData', async(req, res)=>{
+
+
+    app.get('/freelancerData', async (req, res) => {
       const result = await freelancerTaskCollection.find().toArray()
       res.send(result)
     })
 
-    app.get('/freelancerData/:id', async(req, res)=>{
+
+    app.get('/freelancerData/:id', async (req, res) => {
       const id = req.params.id
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await freelancerTaskCollection.findOne(query)
       res.send(result)
     })
 
-    app.post('/freelancerData', async(req, res)=>{
-      const newAddTaskData =req.body;
+    app.post('/freelancerData', async (req, res) => {
+      const newAddTaskData = req.body;
       const result = await freelancerTaskCollection.insertOne(newAddTaskData)
       res.send(result)
     })
 
 
+
+    // User related ApIs
+
+    app.get('/users', async (req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result)
+    })
+
+
+    app.get('/users/:email', async (req, res) => {
+      const email = req.query.email;
+      const result = await userCollection.find({ email }).toArray();
+      res.send(result);
+    });
+
+    app.post('/users', async (req, res) => {
+      const userProfile = req.body;
+      const result = await userCollection.insertOne(userProfile)
+      res.send(result)
+    })
+
+
+    app.delete('/users/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await userCollection.deleteOne(query);
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -60,10 +92,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req, res)=>{
-    res.send("freelancer task server is ready")
+app.get('/', (req, res) => {
+  res.send("freelancer task server is ready")
 });
 
-app.listen(port, ()=>{
-    console.log(`freelancer task server is running on port ${port}`)
+app.listen(port, () => {
+  console.log(`freelancer task server is running on port ${port}`)
 });
