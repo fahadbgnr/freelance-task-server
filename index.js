@@ -45,15 +45,22 @@ async function run() {
       res.send(result)
     })
 
-    app.get('/freelancerData/:email', async (req, res) => {
+    app.get('/freelancers', async (req, res) => {
       const email = req.query.email;
-      const result = await freelancerTaskCollection.find({ email }).toArray();
+      const result = await freelancerTaskCollection.find({ email:email }).toArray();
       res.send(result);
     });
 
     app.post('/freelancerData', async (req, res) => {
       const newAddTaskData = req.body;
       const result = await freelancerTaskCollection.insertOne(newAddTaskData)
+      res.send(result)
+    })
+
+    app.delete('/freelancer/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await freelancerTaskCollection.deleteOne(query);
       res.send(result)
     })
 
@@ -65,13 +72,6 @@ async function run() {
       const result = await userCollection.find().toArray();
       res.send(result)
     })
-
-
-    // app.get('/users/:email', async (req, res) => {
-    //   const email = req.query.email;
-    //   const result = await userCollection.find({ email }).toArray();
-    //   res.send(result);
-    // });
 
     app.post('/users', async (req, res) => {
       const userProfile = req.body;
