@@ -47,7 +47,7 @@ async function run() {
 
     app.get('/freelancers', async (req, res) => {
       const email = req.query.email;
-      const result = await freelancerTaskCollection.find({ email:email }).toArray();
+      const result = await freelancerTaskCollection.find({ email: email }).toArray();
       res.send(result);
     });
 
@@ -56,6 +56,23 @@ async function run() {
       const result = await freelancerTaskCollection.insertOne(newAddTaskData)
       res.send(result)
     })
+
+    app.put('/freelancerData/:id', async (req, res) => {
+      const id = req.params.id;
+      const updatedTask = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          title: updatedTask.title,
+          category: updatedTask.category,
+          deadline: updatedTask.deadline,
+          budget: updatedTask.budget,
+          description: updatedTask.description,
+        },
+      };
+      const result = await freelancerTaskCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
 
     app.delete('/freelancer/:id', async (req, res) => {
       const id = req.params.id;
