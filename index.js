@@ -51,6 +51,21 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/featuredTasks', async (req, res) => {
+      try {
+        const result = await freelancerTaskCollection
+          .find()
+          .sort({ deadline: 1 })
+          .limit(6)
+          .toArray();
+
+        res.send(result);
+      } catch (error) {
+        console.error("Error fetching featured tasks:", error);
+        res.status(500).send({ error: "Failed to fetch featured tasks" });
+      }
+    });
+
     app.post('/freelancerData', async (req, res) => {
       const newAddTaskData = req.body;
       const result = await freelancerTaskCollection.insertOne(newAddTaskData)
