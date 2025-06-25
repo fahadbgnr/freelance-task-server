@@ -29,6 +29,9 @@ async function run() {
 
     const freelancerTaskCollection = client.db('freelancerDB').collection('freelancerData');
     const userCollection = client.db('freelancerDB').collection('users');
+   
+  
+
 
 
 
@@ -66,6 +69,16 @@ async function run() {
       }
     });
 
+    app.get('/dashboard-stats', async (req, res) => {
+      try {
+        const totalTasks = await freelancerTaskCollection.countDocuments();
+        res.send({ totalTasks });
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+        res.status(500).send({ error: "Failed to fetch dashboard stats" });
+      }
+    });
+
     app.post('/freelancerData', async (req, res) => {
       const newAddTaskData = req.body;
       const result = await freelancerTaskCollection.insertOne(newAddTaskData)
@@ -89,7 +102,7 @@ async function run() {
       res.send(result);
     });
 
-    
+
     app.delete('/freelancer/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
@@ -119,6 +132,11 @@ async function run() {
       const result = await userCollection.deleteOne(query);
       res.send(result)
     })
+
+
+
+
+
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
